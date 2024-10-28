@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VirusTotal URL Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    textarea {
+      width: 80%;
+      height: 100px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1em;
+      color: #333;
+      background-color: #e6f7ff;
+      border: 2px solid #007acc;
+      border-radius: 4px;
+      resize: none;
+    }
+    #outputUrls {
+      background-color: #e8ffe6;
+      border-color: #009900;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 10px 5px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 8px;
+      margin-right: 5px;
+      font-size: 1em;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>VirusTotal URL Generator</h1>
+
+<label for="subdomains">Enter Subdomains:</label>
+<textarea id="subdomains" placeholder="Paste subdomains here..."></textarea>
+
+<div class="input-group">
+  <input type="text" id="newApiKey" placeholder="Add new API key">
+  <button onclick="addApiKey()">Add API Key</button>
+</div>
+
+<button onclick="generateUrls()">Generate VirusTotal URLs</button>
+
+<label for="outputUrls">Generated VirusTotal URLs:</label>
+<textarea id="outputUrls" readonly placeholder="Generated URLs will appear here..."></textarea>
+
+<script>
+  // Permanent API keys
+  const apiKeys = [
+    "b0c92c80553bf2e87df7e8259625f5932ed1ae06ee92e1b1c9ec7d096849b518",
+    "e578cb5b82e897f2b866ff270f5fe395af163d62be60daee76667455b0828b3f",
+    "9de737a9c0d110299c077cf950a8f320e3827000e21febe1ce58d26317d88b56"
+  ];
+
+  function addApiKey() {
+    const newKey = document.getElementById("newApiKey").value.trim();
+    if (newKey && !apiKeys.includes(newKey)) {
+      apiKeys.push(newKey);
+      alert("API key added successfully!");
+    } else {
+      alert("Please enter a valid, unique API key.");
+    }
+    document.getElementById("newApiKey").value = "";
+  }
+
+  function generateUrls() {
+    const subdomainsInput = document.getElementById("subdomains").value;
+    const outputTextarea = document.getElementById("outputUrls");
+    
+    // Clean subdomain input by removing extra symbols and splitting by newline or comma
+    let subdomains = subdomainsInput
+      .replace(/["',]/g, "")
+      .split(/\s+/)
+      .filter(Boolean);
+
+    // Generate URLs and cycle through API keys
+    let generatedUrls = subdomains.map((subdomain, index) => {
+      let apiKey = apiKeys[index % apiKeys.length];
+      return `https://www.virustotal.com/vtapi/v2/domain/report?apikey=${apiKey}&domain=${subdomain}`;
+    });
+
+    // Display generated URLs in the output textarea
+    outputTextarea.value = generatedUrls.join("\n");
+  }
+</script>
+
+</body>
+</html>
